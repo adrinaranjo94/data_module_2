@@ -5,11 +5,17 @@ services:
   flask-service:
     build:
       context: ./flask-app
+    volumes:
+      - ./flask-app:/app  # Monta el directorio local de flask-app al contenedor
     ports:
       - "3001:5000"
 
   node-service:
     build:
       context: ./node-app
+    volumes:
+      - ./node-app:/app  # Monta el directorio local de node-app al contenedor
+      - /app/node_modules  # Evita que los node_modules se sobrescriban
     ports:
       - "3000:3000"
+  

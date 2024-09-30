@@ -26,6 +26,7 @@ app.post("/api/add", (req, res) => {
   const { task } = req.body;
   if (task) {
     todoList.push(task);
+
     return res.status(201).json({ message: "Task added successfully!" });
   }
   return res.status(400).json({ message: "Task is required!" });
