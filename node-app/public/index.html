@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .todo-list {
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .todo-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+      form {
+        margin-bottom: 20px;
+      }
+
+      /* Modal styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 100px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+      }
+
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .success {
+        color: green;
+      }
+
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="todo-list">
+      <h1>To-Do List</h1>
+      <form id="todoForm">
+        <input
+          type="text"
+          id="taskInput"
+          placeholder="Enter a new task"
+          required
+        />
+        <button type="submit">Add Task</button>
+      </form>
+
+      <ul id="todoList">
+        <!-- Se llenará dinámicamente con JS -->
+      </ul>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modalMessage"></p>
+      </div>
+    </div>
+
+    <script>
+      const todoForm = document.getElementById("todoForm");
+      const taskInput = document.getElementById("taskInput");
+      const todoList = document.getElementById("todoList");
+      const modal = document.getElementById("myModal");
+      const modalMessage = document.getElementById("modalMessage");
+      const closeModal = document.getElementsByClassName("close")[0];
+
+      // Close the modal when the user clicks on (x)
+      closeModal.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      // Close the modal when the user clicks outside of the modal
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+
+      // Fetch initial tasks on page load
+      window.onload = async () => {
+        await fetchTasks();
+      };
+
+      // Handle form submission to add a new task
+      todoForm.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const task = taskInput.value.trim();
+        if (task === "") {
+          showModal("Task cannot be empty!", "error");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ task }),
+          });
+
+          const result = await response.json();
+
+          if (response.status === 201) {
+            showModal(result.message, "success");
+            await fetchTasks();
+          } else {
+            showModal(result.message, "error");
+          }
+        } catch (error) {
+          showModal("Failed to add task.", "error");
+        }
+
+        taskInput.value = "";
+      };
+
+      // Fetch tasks and update the list
+      async function fetchTasks() {
+        try {
+          const response = await fetch("/api/todos");
+          const tasks = await response.json();
+
+          todoList.innerHTML = "";
+          tasks.forEach((task, index) => {
+            const li = document.createElement("li");
+            li.className = "todo-item";
+            li.innerHTML = `
+                        ${task}
+                        <a href="#" onclick="deleteTask(${index})">Delete</a>
+                    `;
+            todoList.appendChild(li);
+          });
+        } catch (error) {
+          showModal("Failed to fetch tasks.", "error");
+        }
+      }
+
+      // Delete task
+      async function deleteTask(taskIndex) {
+        try {
+          const response = await fetch(`/api/delete/${taskIndex}`, {
+            method: "DELETE",
+          });
+
+          const result = await response.json();
+
+          if (response.status === 200) {
+            showModal(result.message, "success");
+            await fetchTasks();
+          } else {
+            showModal(result.message, "error");
+          }
+        } catch (error) {
+          showModal("Failed to delete task.", "error");
+        }
+      }
+
+      // Show modal with message
+      function showModal(message, type) {
+        modalMessage.innerText = message;
+        modalMessage.className = type;
+        modal.style.display = "block";
+      }
+    </script>
+  </body>
+</html>
