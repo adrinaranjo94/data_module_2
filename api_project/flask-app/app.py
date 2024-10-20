@@ -9,12 +9,11 @@ todo_list = []
 @app.route('/')
 def index():
     return render_template('index.html', tasks=todo_list)
-
+                  
 # API: Endpoint para consultar la lista de tareas
 @app.route('/api/todos', methods=['GET'])
 def get_todos():
     return jsonify(todo_list), 200
-
 # API: Endpoint para agregar una nueva tarea
 @app.route('/api/add', methods=['POST'])
 def add_task():
