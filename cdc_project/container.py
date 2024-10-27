@@ -49,6 +49,17 @@ def delete_containers():
 
     print("Specified containers have been deleted.")
 
+def create_containers():
+    print("Creating MySQL and MongoDB containers...")
+    
+    mysql_cmd = "docker run -p 3306:3306 --name some-mysql -e MYSQL_ROOT_PASSWORD=MyNewPass -d mysql:8.0"
+    mongo_cmd = "docker run -p 27017:27017 --name some-mongo -d mongo"
+    
+    os.system(mysql_cmd)
+    os.system(mongo_cmd)
+    
+    print("Containers for MySQL and MongoDB have been created.")
+
 # Read input arguments
 if len(sys.argv) > 1:
     command = sys.argv[1]
@@ -73,3 +84,5 @@ if len(sys.argv) > 1:
     elif command == '-delete':
         # Delete the containers for MySQL and MongoDB
         delete_containers()
+    elif command == '-create':
+        create_containers()

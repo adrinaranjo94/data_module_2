@@ -62,7 +62,7 @@ This project implements different **Change Data Capture (CDC)** strategies using
 - **Initialize the database and apply a CDC strategy:**
 
   ```bash
-  python main.py -init --strategy [differential|binlog|triggers] --to [mongo]
+  python container.py -init --strategy [differential|binlog|triggers] --to [mongo]
   ```
 
   This command initializes the MySQL database and applies the specified CDC strategy.
