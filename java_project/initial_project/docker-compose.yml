@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  hello_world:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: java_hello_world
+    volumes:
+      - ./source:/app

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mysql:
+    build: ./db
+    ports:
+      - "3306:3306"
+    networks:
+      - my_network
+  spring_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring_boot_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - mysql
+  
+
+networks:
+  my_network:
+    driver: bridge
