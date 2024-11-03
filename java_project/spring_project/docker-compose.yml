@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring_boot_app
+    container_name: spring_boot_app_test
     ports:
       - "8080:8080"
     volumes:

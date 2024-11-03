@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: spring_boot_app
+    container_name: debezium_spring_app
     ports:
       - "8080:8080"
     volumes:

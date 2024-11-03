@@ -7,4 +7,5 @@ services:
       dockerfile: Dockerfile
     container_name: java_hello_world
     volumes:
-      - ./source:/app
+      - ./app:/app
+    command: tail -f /dev/null
