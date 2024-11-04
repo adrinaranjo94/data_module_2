@@ -1,0 +1,15 @@
+{% extends "layout.html" %} {% block title %}Detalles de Receta{% endblock %} {%
+block content %}
+<h2>{{ recipe.name }}</h2>
+<p><strong>Ingredients:</strong> {{ recipe.ingredients }}</p>
+<p><strong>Steps:</strong> {{ recipe.steps }}</p>
+<p><strong>Preparation time:</strong> {{ recipe.prep_time }} minutes</p>
+<p><strong>Difficulty:</strong> {{ recipe.difficulty }}</p>
+<a href="{{ url_for('edit_recipe', recipe_id=recipe.id) }}">Editar</a>
+<form
+  action="{{ url_for('delete_recipe', recipe_id=recipe.id) }}"
+  method="POST"
+>
+  <button type="submit">Borrar</button>
+</form>
+{% endblock %}

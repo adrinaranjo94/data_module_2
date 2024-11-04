@@ -1,0 +1,30 @@
+{% extends "layout.html" %} {% block title %}Recipe List{% endblock %} {% block
+content %}
+<main>
+  <h2>Recipe List</h2>
+  <div class="recipe-list">
+    {% for recipe in recipes %}
+    <div class="recipe-card">
+      <h3>{{ recipe.name }}</h3>
+      <p><strong>Preparation Time:</strong> {{ recipe.prep_time }} minutes</p>
+      <p><strong>Difficulty:</strong> {{ recipe.difficulty|capitalize }}</p>
+
+      <div class="card-actions">
+        <a
+          href="{{ url_for('recipe_detail', recipe_id=recipe.id) }}"
+          class="btn btn-view"
+          >View</a
+        >
+        {% if session[role] == 'admin' %}
+        <a
+          href="{{ url_for('edit_recipe', recipe_id=recipe.id) }}"
+          class="btn btn-edit"
+          >Edit</a
+        >
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Recipe Management{% endblock %}</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+
+        {% if session['username'] %}
+        <!-- Mostrar opciones para usuarios autenticados -->
+        <a href="{{ url_for('profile') }}">Profile</a>
+        <a href="{{ url_for('add_recipe') }}">Add Recipe</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        <span>Welcome, {{ session['username'] }}!</span>
+        {% else %}
+        <!-- Mostrar opciones para usuarios no autenticados -->
+        <a href="{{ url_for('login') }}">Login</a>
+        <a href="{{ url_for('register') }}">Register</a>
+        {% endif %}
+      </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=True) %} {% if
+    messages %}
+    <div>
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <main>{% block content %}{% endblock %}</main>
+  </body>
+</html>
