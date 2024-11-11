@@ -3,36 +3,62 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mapa de Calor</title>
+    <title>Mapa de Calor en Tiempo Real</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <style>
+      .highlight {
+        border: 3px solid yellow;
+        transition: border 0.5s ease;
+      }
+    </style>
   </head>
   <body>
     <h1>Mapa de Calor de Datos de Clima</h1>
-    <div id="heatmap"></div>
+    <div id="heatmap" class="heatmap"></div>
 
     <script>
-      fetch("/data")
-        .then((response) => response.json())
-        .then((data) => {
-          const temperatures = data.map((d) => d.temperature);
-          const windspeed = data.map((d) => d.windspeed);
+      const socket = io();
+      let previousData = [];
 
-          const trace = {
-            x: temperatures,
-            y: windspeed,
-            mode: "markers",
-            type: "scatter",
-            marker: { size: 10 },
-          };
+      function processData(newData) {
+        const temperatures = newData.map((d) => d.temperature);
+        const windspeed = newData.map((d) => d.windspeed);
 
-          const layout = {
-            title: "Mapa de Calor de Temperatura y Humedad",
-            xaxis: { title: "Temperatura" },
-            yaxis: { title: "Velocidad viento" },
-          };
-
-          Plotly.newPlot("heatmap", [trace], layout);
+        const colors = temperatures.map((temp, index) => {
+          if (
+            previousData[index] &&
+            temp === previousData[index].temperature &&
+            windspeed[index] === previousData[index].windspeed
+          ) {
+            return "grey";
+          } else {
+            return "yellow";
+          }
         });
+
+        const trace = {
+          x: temperatures,
+          y: windspeed,
+          mode: "markers",
+          type: "scatter",
+          marker: { size: 10, color: colors },
+        };
+
+        const layout = {
+          title: "Mapa de Calor de Temperatura y Velocidad del Viento",
+          xaxis: { title: "Temperatura" },
+          yaxis: { title: "Velocidad del Viento" },
+        };
+
+        Plotly.react("heatmap", [trace], layout);
+
+        previousData = newData;
+      }
+
+      socket.on("update_data", (data) => {
+        processData(data);
+      });
     </script>
   </body>
 </html>
