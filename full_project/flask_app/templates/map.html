@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mapa de Calor</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  </head>
+  <body>
+    <h1>Mapa de Calor de Datos de Clima</h1>
+    <div id="heatmap"></div>
+
+    <script>
+      fetch("/data")
+        .then((response) => response.json())
+        .then((data) => {
+          const temperatures = data.map((d) => d.temperature);
+          const windspeed = data.map((d) => d.windspeed);
+
+          const trace = {
+            x: temperatures,
+            y: windspeed,
+            mode: "markers",
+            type: "scatter",
+            marker: { size: 10 },
+          };
+
+          const layout = {
+            title: "Mapa de Calor de Temperatura y Humedad",
+            xaxis: { title: "Temperatura" },
+            yaxis: { title: "Velocidad viento" },
+          };
+
+          Plotly.newPlot("heatmap", [trace], layout);
+        });
+    </script>
+  </body>
+</html>

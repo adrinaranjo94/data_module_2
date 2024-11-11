@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  mysql:
+    build: ./mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: weather
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongodb:
+    build: ./mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  debezium:
+    build: ./debezium
+    depends_on:
+      - mysql
+      - mongodb
+    volumes:
+      - ./debezium/src:/app/src
+
+  flask:
+    build: ./flask_app
+    ports:
+      - "5090:5090"
+    depends_on:
+      - mongodb
+    volumes:
+      - ./flask_app:/app
+
+  data_capture:
+    build: ./data_capture
+    depends_on:
+      - mysql
+    volumes:
+      - ./data_capture:/app
+
+volumes:
+  mysql_data:
+  mongodb_data:

@@ -15,7 +15,8 @@ jwt = JWTManager(app)
 @app.route('/')
 def index():
     recipes = Recipe.query.all()
-    return render_template('index.html', recipes=recipes)
+    sorted_recipes = sorted(recipes, key=lambda recipe: recipe.prep_time)
+    return render_template('index.html', recipes=sorted_recipes)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

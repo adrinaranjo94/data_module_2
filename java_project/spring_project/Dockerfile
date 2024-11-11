@@ -11,3 +11,5 @@ COPY app/src ./src
 EXPOSE 8080
 
 CMD ["mvn", "spring-boot:run"]
+
+
